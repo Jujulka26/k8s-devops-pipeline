@@ -65,7 +65,21 @@ jobs:
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
-      # --- 4. Build the Docker Image ---
+      # --- 4. Build & Push Docker Images ---
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Build Docker Images
         run: |
           docker compose build
+
+      - name: Push Docker Images
+        run: |
+          docker tag k8s-devops-pipeline-backend ghcr.io/${{ github.repository_owner }}/k8s-devops-pipeline-backend:latest
+          docker tag k8s-devops-pipeline-frontend ghcr.io/${{ github.repository_owner }}/k8s-devops-pipeline-frontend:latest
+          docker push ghcr.io/${{ github.repository_owner }}/k8s-devops-pipeline-backend:latest
+          docker push ghcr.io/${{ github.repository_owner }}/k8s-devops-pipeline-frontend:latest
