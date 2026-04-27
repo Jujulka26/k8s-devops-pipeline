@@ -22,7 +22,7 @@ jobs:
 
       - name: Run JUnit & Mockito
         run: |
-          cd spring-boot-server
+          cd backend
           chmod +x mvnw
           ./mvnw test
 
@@ -34,7 +34,7 @@ jobs:
 
       - name: Run Jasmine & Karma
         run: |
-          cd angular-15-client
+          cd frontend
           npm install
           npm test -- --watch=false --browsers=ChromeHeadless
 
@@ -46,7 +46,7 @@ jobs:
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
-          args: --file=angular-15-client/package.json
+          args: --file=frontend/package.json
 
       # --- 3b. Security Check: Backend (Maven) ---
       - name: Snyk Backend Scan
@@ -54,7 +54,7 @@ jobs:
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
-          args: --file=spring-boot-server/pom.xml --severity-threshold=critical
+          args: --file=backend/pom.xml --severity-threshold=critical
 
       # --- 4. Build the Docker Image ---
       #- name: Build Docker Images
