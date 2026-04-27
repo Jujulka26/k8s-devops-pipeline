@@ -1,0 +1,31 @@
+.page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 1.5rem;
+  background: #f0f2f5;
+}
+
+h2 {
+  font-size: 1.8rem;
+  color: #1a1a2e;
+  font-weight: 600;
+}
+
+.btn-logout {
+  padding: 0.75rem 2.5rem;
+  background: #ef4444;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-logout:hover {
+  background: #dc2626;
+}
