@@ -44,11 +44,16 @@ jobs:
           args: --file=frontend/package.json
 
       # --- 3b. Security Check: Backend (Maven) ---
+      - name: Debug Java inside Snyk container
+        uses: snyk/actions/maven@master
+        with:
+          args: java -version
       - name: Snyk Backend Scan
         # continue-on-error: true (never use this in backend pipelines, only in frontend or non-critical scans)
         uses: snyk/actions/maven@master
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+          JAVA_HOME: /usr/local/openjdk-17
         with:
           args: --file=backend/pom.xml --severity-threshold=critical
 
