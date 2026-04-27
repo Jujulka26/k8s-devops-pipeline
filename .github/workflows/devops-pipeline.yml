@@ -27,7 +27,7 @@ jobs:
           ./mvnw test
 
       # --- 2. Testing the "Face" (Angular) ---
-      - name: Run Vitest # Updated the name to be accurate
+      - name: Run Vitest
         run: |
           cd frontend
           npm install
@@ -36,7 +36,7 @@ jobs:
       # --- 3. Security Check (Snyk) ---
       # --- 3a. Security Check: Frontend (Node) ---
       - name: Snyk Frontend Scan
-        continue-on-error: true  # Don't fail the pipeline if vulnerabilities are found
+        # continue-on-error: true  
         uses: snyk/actions/node@master
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
@@ -45,9 +45,11 @@ jobs:
 
       # --- 3b. Security Check: Backend (Maven) ---
       - name: Snyk Backend Scan
+        # continue-on-error: true (never use this in backend pipelines, only in frontend or non-critical scans)
         uses: snyk/actions/maven@master
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+          JAVA_HOME: ''
         with:
           args: --file=backend/pom.xml --severity-threshold=critical
 
