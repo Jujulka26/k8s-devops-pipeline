@@ -6,14 +6,14 @@ on:
 
 jobs:
   build-and-test:
-    runs-on: ubuntu-latest  # The "Racing Frame" we talked about
+    runs-on: ubuntu-latest  # The "Racing Frame" for Rocket
 
     steps:
       # --- 0. Get the Code ---
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # --- 1. Testing the "Brain" (Spring Boot) ---
+      # --- 1. Testing Spring Boot ---
       - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
@@ -27,16 +27,11 @@ jobs:
           ./mvnw test
 
       # --- 2. Testing the "Face" (Angular) ---
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '18'
-
-      - name: Run Jasmine & Karma
+      - name: Run Vitest # Updated the name to be accurate
         run: |
           cd frontend
           npm install
-          npm test -- --watch=false --browsers=ChromeHeadless
+          npm test -- --watch=false
 
       # --- 3. Security Check (Snyk) ---
       # --- 3a. Security Check: Frontend (Node) ---
