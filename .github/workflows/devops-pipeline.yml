@@ -33,29 +33,21 @@ jobs:
           npm install
           npm test -- --watch=false
 
-      # --- 3. Security Check (Snyk) ---
+      # --- 3. Security Check (Snyk CLI) ---
+      - name: Install Snyk CLI
+        uses: snyk/actions/setup@master
+
       # --- 3a. Security Check: Frontend (Node) ---
       - name: Snyk Frontend Scan
-        # continue-on-error: true  
-        uses: snyk/actions/node@master
+        run: snyk test --file=frontend/package.json --severity-threshold=critical
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-        with:
-          args: --file=frontend/package.json
 
       # --- 3b. Security Check: Backend (Maven) ---
-      - name: Debug Java inside Snyk container
-        uses: snyk/actions/maven@master
-        with:
-          args: java -version
       - name: Snyk Backend Scan
-        # continue-on-error: true (never use this in backend pipelines, only in frontend or non-critical scans)
-        uses: snyk/actions/maven@master
+        run: snyk test --file=backend/pom.xml --severity-threshold=critical
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-          JAVA_HOME: /usr/local/openjdk-17
-        with:
-          args: --file=backend/pom.xml --severity-threshold=critical
 
       # --- 4. Build the Docker Image ---
       #- name: Build Docker Images
