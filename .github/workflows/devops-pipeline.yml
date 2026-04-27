@@ -49,7 +49,6 @@ jobs:
         uses: snyk/actions/maven@master
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-          JAVA_HOME: ''
         with:
           args: --file=backend/pom.xml --severity-threshold=critical
 
