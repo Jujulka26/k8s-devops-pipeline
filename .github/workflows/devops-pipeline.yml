@@ -79,7 +79,8 @@ jobs:
 
       - name: Push Docker Images
         run: |
-          docker tag k8s-devops-pipeline-backend ghcr.io/${{ github.repository_owner }}/k8s-devops-pipeline-backend:latest
-          docker tag k8s-devops-pipeline-frontend ghcr.io/${{ github.repository_owner }}/k8s-devops-pipeline-frontend:latest
-          docker push ghcr.io/${{ github.repository_owner }}/k8s-devops-pipeline-backend:latest
-          docker push ghcr.io/${{ github.repository_owner }}/k8s-devops-pipeline-frontend:latest
+          OWNER=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
+          docker tag k8s-devops-pipeline-backend ghcr.io/${OWNER}/k8s-devops-pipeline-backend:latest
+          docker tag k8s-devops-pipeline-frontend ghcr.io/${OWNER}/k8s-devops-pipeline-frontend:latest
+          docker push ghcr.io/${OWNER}/k8s-devops-pipeline-backend:latest
+          docker push ghcr.io/${OWNER}/k8s-devops-pipeline-frontend:latest
