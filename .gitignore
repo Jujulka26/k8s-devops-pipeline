@@ -9,6 +9,9 @@ terraform/.terraform.tfstate.lock.info
 .env
 *.env
 
+# GCP Service Account Key
+gcp-sa-key.json
+
 # OS
 .DS_Store
 Thumbs.db

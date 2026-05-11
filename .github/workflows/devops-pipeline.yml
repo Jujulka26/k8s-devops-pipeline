@@ -87,3 +87,79 @@ jobs:
           docker tag k8s-devops-pipeline-frontend ghcr.io/${OWNER}/k8s-devops-pipeline-frontend:latest
           docker push ghcr.io/${OWNER}/k8s-devops-pipeline-backend:latest
           docker push ghcr.io/${OWNER}/k8s-devops-pipeline-frontend:latest
+
+  deploy-qa:
+    runs-on: ubuntu-latest
+    needs: build-and-test
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # --- 5. Deploy to GKE (QA) ---
+      - name: Authenticate to GCP
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Install gke-gcloud-auth-plugin
+        run: gcloud components install gke-gcloud-auth-plugin --quiet
+
+      - name: Connect to GKE cluster
+        run: gcloud container clusters get-credentials k8s-devops-cluster --region us-central1 --project k8s-devops-pipeline
+
+      - name: Create image pull secret
+        run: |
+          kubectl delete secret ghcr-secret --ignore-not-found
+          kubectl create secret docker-registry ghcr-secret \
+            --docker-server=ghcr.io \
+            --docker-username=${{ github.repository_owner }} \
+            --docker-password=${{ secrets.GHCR_PAT }}
+
+      - name: Deploy to Kubernetes
+        run: kubectl apply -f k8s/
+
+      - name: Wait for rollout
+        run: |
+          kubectl rollout status deployment/backend --timeout=120s
+          kubectl rollout status deployment/frontend --timeout=120s
+          kubectl rollout status deployment/db --timeout=120s
+
+  cypress-e2e:
+    runs-on: ubuntu-latest
+    needs: deploy-qa
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # --- 6. Get frontend external IP ---
+      - name: Authenticate to GCP
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Install gke-gcloud-auth-plugin
+        run: gcloud components install gke-gcloud-auth-plugin --quiet
+
+      - name: Connect to GKE cluster
+        run: gcloud container clusters get-credentials k8s-devops-cluster --region us-central1 --project k8s-devops-pipeline
+
+      - name: Get frontend IP
+        id: get-ip
+        run: |
+          IP=$(kubectl get service frontend -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+          echo "FRONTEND_URL=http://${IP}" >> $GITHUB_OUTPUT
+
+      # --- 7. Run Cypress E2E Tests ---
+      - name: Run Cypress E2E
+        uses: cypress-io/github-action@v6
+        with:
+          working-directory: frontend
+          config: baseUrl=${{ steps.get-ip.outputs.FRONTEND_URL }}
