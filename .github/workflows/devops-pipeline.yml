@@ -184,4 +184,5 @@ jobs:
         uses: cypress-io/github-action@v6
         with:
           working-directory: frontend
+          install-command: npm install
           config: baseUrl=${{ steps.get-ip.outputs.FRONTEND_URL }}
