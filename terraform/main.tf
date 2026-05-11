@@ -1,3 +1,10 @@
+terraform {
+  backend "gcs" {
+    bucket = "k8s-devops-pipeline-tfstate"
+    prefix = "terraform/state"
+  }
+}
+
 provider "google" {
   project = var.project_id
   region  = var.region
