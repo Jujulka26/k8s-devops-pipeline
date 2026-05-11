@@ -131,7 +131,7 @@ jobs:
         run: gcloud components install gke-gcloud-auth-plugin --quiet
 
       - name: Connect to GKE cluster
-        run: gcloud container clusters get-credentials k8s-devops-cluster --region us-central1 --project k8s-devops-pipeline
+        run: gcloud container clusters get-credentials k8s-devops-cluster --region asia-southeast1 --project k8s-devops-pipeline
 
       - name: Create image pull secret
         run: |
@@ -171,7 +171,7 @@ jobs:
         run: gcloud components install gke-gcloud-auth-plugin --quiet
 
       - name: Connect to GKE cluster
-        run: gcloud container clusters get-credentials k8s-devops-cluster --region us-central1 --project k8s-devops-pipeline
+        run: gcloud container clusters get-credentials k8s-devops-cluster --region asia-southeast1 --project k8s-devops-pipeline
 
       - name: Get frontend IP
         id: get-ip
