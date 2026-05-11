@@ -179,7 +179,7 @@ jobs:
           IP=$(kubectl get service frontend -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
           echo "FRONTEND_URL=http://${IP}" >> $GITHUB_OUTPUT
 
-      # --- 8. Run Cypress E2E Tests --
+      # --- 8. Run Cypress E2E Tests ---
       - name: Run Cypress E2E
         uses: cypress-io/github-action@v6
         with:
