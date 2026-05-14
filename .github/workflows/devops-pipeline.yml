@@ -180,9 +180,18 @@ jobs:
           echo "FRONTEND_URL=http://${IP}" >> $GITHUB_OUTPUT
 
       # --- 8. Run Cypress E2E Tests --
-      - name: Run Cypress E2E
+      - name: Run Cypress E2E - register first
         uses: cypress-io/github-action@v6
         with:
           working-directory: frontend
           install-command: npm install
+          spec: cypress/e2e/register.cy.ts
+          config: baseUrl=${{ steps.get-ip.outputs.FRONTEND_URL }}
+
+      - name: Run Cypress E2E - login after register
+        uses: cypress-io/github-action@v6
+        with:
+          working-directory: frontend
+          install-command: npm install
+          spec: cypress/e2e/login.cy.ts
           config: baseUrl=${{ steps.get-ip.outputs.FRONTEND_URL }}
